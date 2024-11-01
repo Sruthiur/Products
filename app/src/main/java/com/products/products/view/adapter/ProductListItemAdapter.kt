@@ -56,6 +56,11 @@ class ProductListItemAdapter
         }
 
 
+            if (position == mList?.size!! - 1) {
+                listener.onScrollChange(true)
+            }
+
+
     }
 
     // return the number of the items in the list
@@ -79,6 +84,7 @@ class ProductListItemAdapter
 
     interface ProductsItemClicked {
         fun onProductsItemClicked(selected: String) // Define callback method
+        fun onScrollChange(selected: Boolean)
     }
 
 

@@ -1,6 +1,7 @@
 package com.products.products.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +32,7 @@ class ProductsFragment : Fragment(), ProductListItemAdapter.ProductsItemClicked 
     var binding: FragmentProductsBinding? = null
     private var productDataAdapter: ProductListItemAdapter?=null
     val productsViewModel: ProductsViewModel by viewModels()
-
+    var skip = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,7 +51,12 @@ class ProductsFragment : Fragment(), ProductListItemAdapter.ProductsItemClicked 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        productsViewModel.getProductList("10","0")
+        loadNextPage("10", "0")
+
+        }
+
+    private fun loadNextPage(limit: String, skip: String) {
+        productsViewModel.getProductList(limit,skip)
 
         productsViewModel.productResponse.observe(viewLifecycleOwner) {
                 response ->
@@ -72,7 +78,7 @@ class ProductsFragment : Fragment(), ProductListItemAdapter.ProductsItemClicked 
                     Toast.makeText(ProductApp.instance, "No response found", Toast.LENGTH_SHORT).show()}
             }
         }
-        }
+    }
 
 
     private fun setProduct(
@@ -88,5 +94,12 @@ class ProductsFragment : Fragment(), ProductListItemAdapter.ProductsItemClicked 
         val bundle = Bundle()
         bundle.putString("id", selected)
         findNavController().navigate(R.id.action_productsFragment_to_productDetailsFragment,bundle)
+    }
+
+    override fun onScrollChange(selected: Boolean) {
+        if (selected){
+            loadNextPage("10", skip++.toString())
+        }
+
     }
 }
